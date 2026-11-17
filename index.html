@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Absensi Guru - SMP Yayasan</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Library SheetJS untuk Export langsung ke file Excel (.xlsx) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Sistem & Rekap Absensi Siswa - SMP Yayasan Nusantara</h1>
+        <p id="tanggalHariIni">Memuat tanggal...</p>
+    </div>
+
+    <!-- Pilih Tanggal & Hari Rekap Absensi Harian -->
+    <div class="box">
+        <h3 style="margin-top: 0;">1. Input Absensi Harian Guru</h3>
+        <div class="form-grid" style="align-items: center;">
+            <div>
+                <label style="font-size: 13px; color: #555; display: block; margin-bottom: 4px;">Tanggal Absensi:</label>
+                <input type="date" id="pilihTanggal" onchange="gantiTanggal()">
+            </div>
+            <div>
+                <label style="font-size: 13px; color: #555; display: block; margin-bottom: 4px;">Hari:</label>
+                <input type="text" id="tampilHari" readonly style="background-color: #e9ecef; font-weight: bold; color: #1e3c72;">
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="hadirSemuaTanggalIni()">Tandai Semua Hadir (Tanggal Ini)</button>
+            <button class="btn-reset" onclick="resetTanggalIni()">Reset Absensi Tanggal Ini</button>
+        </div>
+    </div>
+
+    <!-- Statistik Kehadiran pada Tanggal Terpilih -->
+    <div class="stats">
+        <div class="card">
+            <h3 id="statTotal">35</h3>
+            <span>Total Siswa Tetap</span>
+        </div>
+        <div class="card hadir">
+            <h3 id="statHadir">0</h3>
+            <span>Hadir</span>
+        </div>
+        <div class="card sakit">
+            <h3 id="statSakit">0</h3>
+            <span>Sakit</span>
+        </div>
+        <div class="card izin">
+            <h3 id="statIzin">0</h3>
+            <span>Izin</span>
+        </div>
+        <div class="card alpa">
+            <h3 id="statAlpa">0</h3>
+            <span>Alpa</span>
+        </div>
+    </div>
+
+    <!-- Tabel Absensi Harian (35 Siswa Tetap) -->
+    <div class="box">
+        <h3 style="margin-top: 0;">Daftar Kehadiran Harian</h3>
+        <div class="filter-bar">
+            <input type="text" id="cariNama" placeholder="Cari nama atau NIS siswa..." onkeyup="renderTabel()">
+            <select id="filterKelas" onchange="renderTabel()">
+                <option value="Semua">Semua Kelas</option>
+                <option value="7A">Kelas 7A</option>
+                <option value="7B">Kelas 7B</option>
+                <option value="8A">Kelas 8A</option>
+                <option value="8B">Kelas 8B</option>
+                <option value="9A">Kelas 9A</option>
+                <option value="9B">Kelas 9B</option>
+            </select>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Hari & Tanggal</th>
+                        <th>Status</th>
+                        <th>Isi / Ubah Absensi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelBody">
+                    <!-- 35 Siswa dirender otomatis lewat DOM -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- BAGIAN BARU: REKAP ABSENSI PER SEMESTER & EXPORT EXCEL -->
+    <div class="box" style="border-top: 4px solid #28a745;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+            <div>
+                <h3 style="margin: 0; color: #1e3c72;">2. Rekapitulasi Absensi Per Semester (Semua Siswa)</h3>
+                <p style="margin: 4px 0 0; font-size: 13px; color: #666;">Otomatis menghitung akumulasi Hadir, Sakit, Izin, dan Alpa dari seluruh tanggal yang tercatat.</p>
+            </div>
+            <button onclick="exportRekapExcel()" style="background-color: #217346; color: white; padding: 10px 18px;">
+                📥 Download Rekap Excel (.xlsx)
+            </button>
+        </div>
+
+        <div class="filter-bar">
+            <select id="pilihSemester" onchange="renderRekapSemester()">
+                <option value="Ganjil">Semester Ganjil (Juli – Desember)</option>
+                <option value="Genap">Semester Genap (Januari – Juni)</option>
+                <option value="Semua">Semua Semester (1 Tahun Penuh)</option>
+            </select>
+            <select id="filterKelasSemester" onchange="renderRekapSemester()">
+                <option value="Semua">Semua Kelas</option>
+                <option value="7A">Kelas 7A</option>
+                <option value="7B">Kelas 7B</option>
+                <option value="8A">Kelas 8A</option>
+                <option value="8B">Kelas 8B</option>
+                <option value="9A">Kelas 9A</option>
+                <option value="9B">Kelas 9B</option>
+            </select>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Hadir</th>
+                        <th>Sakit</th>
+                        <th>Izin</th>
+                        <th>Alpa</th>
+                        <th>Total Hari</th>
+                        <th>Persentase</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelRekapSemesterBody">
+                    <!-- Rekap per semester dirender otomatis lewat DOM -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

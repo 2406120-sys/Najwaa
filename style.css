@@ -1,0 +1,169 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.header {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Kartu Statistik */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-top: 4px solid #2a5298;
+}
+
+.card.hadir { border-color: #28a745; }
+.card.sakit { border-color: #ffc107; }
+.card.izin { border-color: #17a2b8; }
+.card.alpa { border-color: #dc3545; }
+
+.card h3 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.card span {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Form Input & Box */
+.box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.btn-primary { background-color: #2a5298; color: white; }
+.btn-primary:hover { background-color: #1e3c72; }
+.btn-demo { background-color: #6c757d; color: white; }
+.btn-reset { background-color: #dc3545; color: white; }
+.btn-hapus { background-color: #dc3545; color: white; padding: 5px 10px; font-size: 12px; }
+
+/* Tabel & Filter */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-bar input, .filter-bar select {
+    flex: 1;
+    min-width: 150px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.select-status {
+    padding: 4px;
+    font-size: 12px;
+}
+
+/* Badge Status */
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.bg-Hadir { background-color: #28a745; }
+.bg-Sakit { background-color: #e0a800; }
+.bg-Izin { background-color: #17a2b8; }
+.bg-Alpa { background-color: #dc3545; }
