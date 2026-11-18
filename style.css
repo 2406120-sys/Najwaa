@@ -32,11 +32,10 @@ body {
 }
 
 .container {
-    max-width: 900px;
+    max-width: 960px;
     margin: 0 auto;
 }
 
-/* Kartu Statistik */
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -68,7 +67,6 @@ body {
     color: #666;
 }
 
-/* Form Input & Box */
 .box {
     background: white;
     padding: 20px;
@@ -79,9 +77,22 @@ body {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
     margin-bottom: 15px;
+}
+
+.label-input {
+    font-size: 13px;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.input-readonly {
+    background-color: #e9ecef;
+    font-weight: bold;
+    color: #1e3c72;
 }
 
 .btn-group {
@@ -110,11 +121,20 @@ button {
 
 .btn-primary { background-color: #2a5298; color: white; }
 .btn-primary:hover { background-color: #1e3c72; }
-.btn-demo { background-color: #6c757d; color: white; }
 .btn-reset { background-color: #dc3545; color: white; }
-.btn-hapus { background-color: #dc3545; color: white; padding: 5px 10px; font-size: 12px; }
+.btn-reset:hover { background-color: #b02a37; }
+.btn-excel { background-color: #217346; color: white; }
+.btn-excel:hover { background-color: #185634; }
 
-/* Tabel & Filter */
+.rekap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
 .filter-bar {
     display: flex;
     gap: 10px;
@@ -150,20 +170,21 @@ th {
 }
 
 .select-status {
-    padding: 4px;
+    padding: 5px;
     font-size: 12px;
 }
 
-/* Badge Status */
 .badge {
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: bold;
     color: white;
+    display: inline-block;
 }
 
 .bg-Hadir { background-color: #28a745; }
 .bg-Sakit { background-color: #e0a800; }
 .bg-Izin { background-color: #17a2b8; }
 .bg-Alpa { background-color: #dc3545; }
+.bg-Belum { background-color: #6c757d; }

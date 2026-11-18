@@ -1,48 +1,37 @@
-// ===============
-// 1. DATA SISWA 
-// ===============
+// ==========================================
+// 1. DATA MASTER 35 SISWA TETAP
+// ==========================================
 const DAFTAR_SISWA = [
-    // Kelas 7A (6 Siswa)
     { nis: '2026001', nama: 'Ahmad Fauzan', kelas: '7A' },
     { nis: '2026002', nama: 'Siti Nurhaliza', kelas: '7A' },
     { nis: '2026003', nama: 'Muhammad Rizky', kelas: '7A' },
     { nis: '2026004', nama: 'Aulia Putri', kelas: '7A' },
     { nis: '2026005', nama: 'Dimas Pratama', kelas: '7A' },
     { nis: '2026006', nama: 'Nabila Zahra', kelas: '7A' },
-
-    // Kelas 7B (6 Siswa)
     { nis: '2026007', nama: 'Fajar Ramadhan', kelas: '7B' },
     { nis: '2026008', nama: 'Intan Permatasari', kelas: '7B' },
     { nis: '2026009', nama: 'Bagas Saputra', kelas: '7B' },
     { nis: '2026010', nama: 'Khairunnisa', kelas: '7B' },
     { nis: '2026011', nama: 'Rafi Akbar', kelas: '7B' },
     { nis: '2026012', nama: 'Salma Salsabila', kelas: '7B' },
-
-    // Kelas 8A (6 Siswa)
     { nis: '2025013', nama: 'Budi Santoso', kelas: '8A' },
     { nis: '2025014', nama: 'Dewi Lestari', kelas: '8A' },
     { nis: '2025015', nama: 'Ilham Maulana', kelas: '8A' },
     { nis: '2025016', nama: 'Anisa Rahmawati', kelas: '8A' },
     { nis: '2025017', nama: 'Galih Prakoso', kelas: '8A' },
     { nis: '2025018', nama: 'Putri Ayuningtyas', kelas: '8A' },
-
-    // Kelas 8B (6 Siswa)
     { nis: '2025019', nama: 'Rizki Hidayat', kelas: '8B' },
     { nis: '2025020', nama: 'Melati Kusuma', kelas: '8B' },
     { nis: '2025021', nama: 'Bayu Setiawan', kelas: '8B' },
     { nis: '2025022', nama: 'Fitri Handayani', kelas: '8B' },
     { nis: '2025023', nama: 'Aditya Nugraha', kelas: '8B' },
     { nis: '2025024', nama: 'Syifa Aulia', kelas: '8B' },
-
-    // Kelas 9A (6 Siswa)
     { nis: '2024025', nama: 'Citra Lestari', kelas: '9A' },
     { nis: '2024026', nama: 'Hendra Wijaya', kelas: '9A' },
     { nis: '2024027', nama: 'Nadia Safitri', kelas: '9A' },
     { nis: '2024028', nama: 'Reza Pahlevi', kelas: '9A' },
     { nis: '2024029', nama: 'Dina Mariana', kelas: '9A' },
     { nis: '2024030', nama: 'Arif Budiman', kelas: '9A' },
-
-    // Kelas 9B (5 Siswa)
     { nis: '2024031', nama: 'Farhan Kamil', kelas: '9B' },
     { nis: '2024032', nama: 'Tiara Andini', kelas: '9B' },
     { nis: '2024033', nama: 'Zaki Mubarak', kelas: '9B' },
@@ -51,7 +40,7 @@ const DAFTAR_SISWA = [
 ];
 
 // ==========================================
-// 2. DATABASE REKAP ABSENSI PER TANGGAL
+// 2. BASIS DATA CLIENT-SIDE (LocalStorage)
 // ==========================================
 const DB_KEY = 'db_rekap_absensi_smp_yayasan';
 let rekapDatabase = JSON.parse(localStorage.getItem(DB_KEY)) || {};
@@ -63,7 +52,7 @@ function simpanDatabase() {
 }
 
 // ==========================================
-// 3. MANIPULASI DOM (Tanggal & Hari Otomatis)
+// 3. MANIPULASI DOM: TANGGAL & HARI OTOMATIS
 // ==========================================
 function formatTanggalIndonesia(dateString) {
     const [tahun, bulan, tanggal] = dateString.split('-');
@@ -93,7 +82,7 @@ function gantiTanggal() {
 }
 
 // ==========================================
-// 4. MANIPULASI DOM (Statistik & Tabel Harian)
+// 4. MANIPULASI DOM: STATISTIK & TABEL HARIAN
 // ==========================================
 function updateStatistik() {
     const tanggalAktif = document.getElementById('pilihTanggal').value;
@@ -120,6 +109,7 @@ function renderTabel() {
     const tbody = document.getElementById('tabelBody');
     const keyword = document.getElementById('cariNama').value.toLowerCase();
     const filterKelas = document.getElementById('filterKelas').value;
+    const filterStatus = document.getElementById('filterStatus').value;
     const tanggalAktif = document.getElementById('pilihTanggal').value;
     const { namaHari, tanggalLengkap } = formatTanggalIndonesia(tanggalAktif);
 
@@ -127,14 +117,24 @@ function renderTabel() {
     tbody.innerHTML = '';
 
     const siswaTersaring = DAFTAR_SISWA.filter(siswa => {
+        const statusSiswa = dataHariIni[siswa.nis] || 'Belum Diisi';
         const cocokNama = siswa.nama.toLowerCase().includes(keyword) || siswa.nis.toLowerCase().includes(keyword);
         const cocokKelas = filterKelas === 'Semua' || siswa.kelas === filterKelas;
-        return cocokNama && cocokKelas;
+        const cocokStatus = filterStatus === 'Semua' || statusSiswa === filterStatus;
+        return cocokNama && cocokKelas && cocokStatus;
     });
+
+    if (siswaTersaring.length === 0) {
+        const trKosong = document.createElement('tr');
+        trKosong.innerHTML = `<td colspan="7" style="text-align:center; color:#888;">Tidak ada siswa yang sesuai dengan filter.</td>`;
+        tbody.appendChild(trKosong);
+        updateStatistik();
+        return;
+    }
 
     siswaTersaring.forEach((siswa, index) => {
         const statusSiswa = dataHariIni[siswa.nis] || 'Belum Diisi';
-        const warnaBadge = statusSiswa === 'Belum Diisi' ? 'background-color:#6c757d;' : '';
+        const kelasBadge = statusSiswa === 'Belum Diisi' ? 'bg-Belum' : `bg-${statusSiswa}`;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -143,11 +143,7 @@ function renderTabel() {
             <td><strong>${siswa.nama}</strong></td>
             <td>${siswa.kelas}</td>
             <td>${namaHari}, ${tanggalLengkap}</td>
-            <td>
-                <span class="badge bg-${statusSiswa}" style="${warnaBadge}">
-                    ${statusSiswa}
-                </span>
-            </td>
+            <td><span class="badge ${kelasBadge}">${statusSiswa}</span></td>
             <td>
                 <select class="select-status" onchange="ubahStatus('${siswa.nis}', this.value)">
                     <option value="Belum Diisi" ${statusSiswa === 'Belum Diisi' ? 'selected' : ''}>-- Pilih Status --</option>
@@ -165,7 +161,7 @@ function renderTabel() {
 }
 
 // ==========================================
-// 5. AKSI REKAP GURU (Simpan per Tanggal)
+// 5. OPERASI CRUD ABSENSI PER TANGGAL
 // ==========================================
 function ubahStatus(nis, statusBaru) {
     const tanggalAktif = document.getElementById('pilihTanggal').value;
@@ -209,14 +205,12 @@ function resetTanggalIni() {
 }
 
 // ==========================================
-// 6. REKAP PER SEMESTER & EXPORT EXCEL 
+// 6. REKAP PER SEMESTER & EXPORT EXCEL MURNI (TANPA LIBRARY)
 // ==========================================
 function hitungDataSemester() {
     const semesterDipilih = document.getElementById('pilihSemester').value;
     const filterKelas = document.getElementById('filterKelasSemester').value;
 
-    // Filter tanggal sesuai semester:
-    // Ganjil = bulan 7 s/d 12 | Genap = bulan 1 s/d 6
     const daftarTanggalValid = Object.keys(rekapDatabase).filter(tgl => {
         const bulan = parseInt(tgl.split('-')[1], 10);
         if (semesterDipilih === 'Ganjil') return bulan >= 7 && bulan <= 12;
@@ -278,40 +272,66 @@ function renderRekapSemester() {
     });
 }
 
-function exportRekapExcel() {
+// Export Excel murni menggunakan Blob API & tabel HTML Excel tanpa library eksternal
+function exportRekapExcelMurni() {
     const semesterDipilih = document.getElementById('pilihSemester').value;
     const filterKelas = document.getElementById('filterKelasSemester').value;
     const hasilRekap = hitungDataSemester();
 
-    // Siapkan data baris untuk Sheet Excel
-    const dataSheet = [
-        ['REKAPITULASI ABSENSI SISWA PER SEMESTER - SMP YAYASAN NUSANTARA'],
-        [`Semester: ${semesterDipilih} | Filter Kelas: ${filterKelas}`],
-        [],
-        ['No', 'NIS', 'Nama Siswa', 'Kelas', 'Total Hadir', 'Total Sakit', 'Total Izin', 'Total Alpa', 'Total Hari Tercatat', 'Persentase Kehadiran']
-    ];
+    let tabelHTML = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+              xmlns:x="urn:schemas-microsoft-com:office:excel" 
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+            <h3>REKAPITULASI ABSENSI SISWA PER SEMESTER - SMP YAYASAN NUSANTARA</h3>
+            <p>Semester: ${semesterDipilih} | Kelas: ${filterKelas}</p>
+            <table border="1">
+                <thead>
+                    <tr style="background-color:#1e3c72; color:white; font-weight:bold;">
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Total Hadir</th>
+                        <th>Total Sakit</th>
+                        <th>Total Izin</th>
+                        <th>Total Alpa</th>
+                        <th>Total Hari Tercatat</th>
+                        <th>Persentase Kehadiran</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
 
     hasilRekap.forEach(r => {
-        dataSheet.push([
-            r.no, r.nis, r.nama, r.kelas,
-            r.hadir, r.sakit, r.izin, r.alpa,
-            r.totalHari, r.persentase
-        ]);
+        tabelHTML += `
+            <tr>
+                <td>${r.no}</td>
+                <td>'${r.nis}</td>
+                <td>${r.nama}</td>
+                <td>${r.kelas}</td>
+                <td>${r.hadir}</td>
+                <td>${r.sakit}</td>
+                <td>${r.izin}</td>
+                <td>${r.alpa}</td>
+                <td>${r.totalHari}</td>
+                <td>${r.persentase}</td>
+            </tr>
+        `;
     });
 
-    // Buat Workbook & Worksheet menggunakan SheetJS
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(dataSheet);
+    tabelHTML += `</tbody></table></body></html>`;
 
-    // Atur lebar kolom agar rapi saat dibuka di Excel
-    ws['!cols'] = [
-        { wch: 5 }, { wch: 12 }, { wch: 24 }, { wch: 8 },
-        { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
-        { wch: 18 }, { wch: 20 }
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, `Rekap_Semester_${semesterDipilih}`);
-    XLSX.writeFile(wb, `Rekap_Absensi_Semester_${semesterDipilih}_SMP_Yayasan.xlsx`);
+    const blob = new Blob([tabelHTML], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Rekap_Absensi_Semester_${semesterDipilih}_SMP_Yayasan.xls`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 // ==========================================
@@ -325,8 +345,6 @@ function init() {
     const hariIniISO = `${tahun}-${bulan}-${tanggal}`;
 
     document.getElementById('pilihTanggal').value = hariIniISO;
-
-    // Otomatis pilih semester berdasarkan bulan saat ini
     document.getElementById('pilihSemester').value = parseInt(bulan, 10) >= 7 ? 'Ganjil' : 'Genap';
 
     gantiTanggal();

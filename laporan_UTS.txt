@@ -1,0 +1,92 @@
+========================================================================
+LAPORAN UJIAN TENGAH SEMESTER (UTS) - PEMROGRAMAN WEB
+Nama Mahasiswa : Najwa Sofwatul Ilmi
+NIM            : 2406120
+Judul Aplikasi : Sistem & Rekapitulasi Absensi Siswa SMP Yayasan Nusantara
+========================================================================
+
+1. DESKRIPSI UMUM APLIKASI
+Aplikasi ini merupakan sistem informasi berbasis web untuk membantu guru
+mencatat kehadiran harian dari 35 siswa tetap di SMP Yayasan Nusantara
+(kelas 7A hingga 9B) serta merekapitulasi data kehadiran per semester
+(Ganjil dan Genap) yang dapat diunduh langsung ke dalam format Excel (.xls).
+
+2. SPESIFIKASI KEBUTUHAN & TOOLS PENDUKUNG
+a. Perangkat Keras (Hardware):
+   - Laptop / PC dengan prosesor minimal Intel Core i3 atau setara
+   - RAM minimal 4 GB
+   - Ruang penyimpanan kosong minimal 50 MB
+
+b. Perangkat Lunak (Software / Tools Pendukung):
+   - Sistem Operasi : Windows 10/11, macOS, atau Linux
+   - Code Editor    : Visual Studio Code (VS Code)
+   - Web Browser    : Google Chrome, Microsoft Edge, atau Mozilla Firefox
+   - Local Server   : Node.js (modul bawaan http & fs) pada port 8080
+   - Version Control: Git & GitHub untuk pengumpulan repositori proyek
+   - Spreadsheet    : Microsoft Excel / LibreOffice Calc (untuk membuka file ekspor)
+
+c. Struktur File Proyek:
+   - index.html      : Struktur antarmuka web (form tanggal, kartu statistik, tabel)
+   - style.css       : Pengaturan tata letak responsif, warna, dan badge status
+   - script.js       : Logika manipulasi DOM, pengelolaan LocalStorage, dan ekspor Excel
+   - server.js       : Server HTTP lokal menggunakan modul bawaan Node.js (http & fs)
+   - laporan_uts.txt : Dokumentasi laporan penjelasan sistem
+
+3. CARA MENJALANKAN APLIKASI
+a. Buka folder proyek di terminal Visual Studio Code.
+b. Jalankan server HTTP lokal dengan perintah:
+   node server.js
+c. Buka web browser dan akses alamat:
+   http://localhost:8080
+
+4. CARA KERJA SISTEM & KONSEP DOM (DOCUMENT OBJECT MODEL)
+a. Pemilihan Tanggal & Deteksi Hari Otomatis:
+   - Ketika pengguna memilih tanggal pada elemen <input type="date" id="pilihTanggal">,
+     event onchange memanggil fungsi gantiTanggal().
+   - JavaScript mengambil nilai tanggal menggunakan document.getElementById(),
+     mengonversinya ke nama hari bahasa Indonesia (Senin-Minggu), lalu menyisipkannya
+     ke dalam input teks readonly dan header halaman menggunakan properti .value dan .textContent.
+
+b. Render Dinamis Tabel Harian & Filter Multi-Kriteria:
+   - Fungsi renderTabel() membaca daftar 35 siswa tetap, menyaringnya berdasarkan
+     input pencarian nama/NIS, pilihan kelas, serta pilihan status kehadiran.
+   - Setiap baris siswa dibuat secara dinamis di memori menggunakan
+     document.createElement('tr'), diisi elemen HTML-nya (.innerHTML), dan
+     ditempelkan ke <tbody id="tabelBody"> menggunakan metode .appendChild().
+
+c. Basis Data Client-Side (LocalStorage Web API):
+   - Data kehadiran setiap tanggal disimpan secara persisten di browser menggunakan
+     localStorage.setItem() dan dibaca kembali dengan localStorage.getItem() dalam
+     format JSON (JSON.stringify dan JSON.parse).
+   - Mendukung operasi CRUD:
+     * Create & Update : Memilih status Hadir, Sakit, Izin, Alpa pada dropdown tiap siswa,
+                         atau menekan tombol "Tandai Semua Hadir".
+     * Read            : Menampilkan data absensi sesuai tanggal yang dipilih dan
+                         menghitung akumulasi kehadiran per semester.
+     * Delete          : Menghapus catatan absensi pada tanggal aktif melalui tombol
+                         "Reset Absensi Tanggal Ini".
+
+d. Pembaruan Statistik Real-Time & Rekap Semester:
+   - Setiap kali status siswa diubah, fungsi updateStatistik() menghitung jumlah
+     Hadir, Sakit, Izin, dan Alpa pada tanggal tersebut lalu memperbarui angka pada
+     kartu statistik secara langsung tanpa memuat ulang (reload) halaman.
+   - Fungsi hitungDataSemester() mengelompokkan seluruh tanggal yang tersimpan di
+     LocalStorage berdasarkan bulan (Juli-Desember untuk Semester Ganjil,
+     Januari-Juni untuk Semester Genap) dan menampilkan persentase kehadiran.
+
+e. Ekspor Rekapitulasi ke Excel Murni (.xls):
+   - Fungsi exportRekapExcelMurni() menyusun struktur tabel HTML khusus Excel,
+     mengonversinya menjadi objek biner menggunakan Blob API (application/vnd.ms-excel),
+     serta memicu unduhan otomatis melalui elemen <a> dinamis yang dibuat lewat DOM.
+
+5. OUTPUT SISTEM / APLIKASI
+a. Tampilan Header & Pemilih Tanggal: Menampilkan judul sekolah, hari, dan tanggal aktif.
+b. Kartu Statistik Kehadiran: Menampilkan ringkasan angka Total Siswa (35), Hadir,
+   Sakit, Izin, dan Alpa secara real-time.
+c. Tabel Absensi Harian: Daftar 35 siswa lengkap dengan badge warna status dan
+   dropdown pengubah status kehadiran.
+d. Tabel Rekapitulasi Per Semester: Menampilkan total akumulasi kehadiran setiap
+   siswa selama satu semester beserta persentase kehadirannya.
+e. File Unduhan Excel (.xls): Dokumen spreadsheet siap cetak bernama
+   "Rekap_Absensi_Semester_[Ganjil/Genap]_SMP_Yayasan.xls".
+========================================================================
